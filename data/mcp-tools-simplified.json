@@ -1,0 +1,402 @@
+[
+  {
+    "name": "copilot_searchCodebase",
+    "description": "Run a natural language search for relevant code or documentation comments from the user's current workspace. Returns relevant code snippets from the user's current workspace if it is large, or the full contents of the workspace if it is small."
+  },
+  {
+    "name": "copilot_searchWorkspaceSymbols",
+    "description": "Search the user's workspace for code symbols using language services. Use this tool when the user is looking for a specific symbol in their workspace."
+  },
+  {
+    "name": "copilot_listCodeUsages",
+    "description": "Request to list all usages (references, definitions, implementations etc) of a function, class, method, variable etc. Use this tool when \n1. Looking for a sample implementation of an interface or class\n2. Checking how a function is used throughout the codebase.\n3. Including and updating all usages when changing a function, method, or constructor"
+  },
+  {
+    "name": "copilot_getVSCodeAPI",
+    "description": "Get comprehensive VS Code API documentation and references for extension development. This tool provides authoritative documentation for VS Code's extensive API surface, including proposed APIs, contribution points, and best practices. Use this tool for understanding complex VS Code API interactions.\n\nWhen to use this tool:\n- User asks about specific VS Code APIs, interfaces, or extension capabilities\n- Need documentation for VS Code extension contribution points (commands, views, settings, etc.)\n- Questions about proposed APIs and their usage patterns\n- Understanding VS Code extension lifecycle, activation events, and packaging\n- Best practices for VS Code extension development architecture\n- API examples and code patterns for extension features\n- Troubleshooting extension-specific issues or API limitations\n\nWhen NOT to use this tool:\n- Creating simple standalone files or scripts unrelated to VS Code extensions\n- General programming questions not specific to VS Code extension development\n- Questions about using VS Code as an editor (user-facing features)\n- Non-extension related development tasks\n- File creation or editing that doesn't involve VS Code extension APIs\n\nCRITICAL usage guidelines:\n1. Always include specific API names, interfaces, or concepts in your query\n2. Mention the extension feature you're trying to implement\n3. Include context about proposed vs stable APIs when relevant\n4. Reference specific contribution points when asking about extension manifest\n5. Be specific about the VS Code version or API version when known\n\nScope: This tool is for EXTENSION DEVELOPMENT ONLY - building tools that extend VS Code itself, not for general file creation or non-extension programming tasks."
+  },
+  {
+    "name": "copilot_findFiles",
+    "description": "Search for files in the workspace by glob pattern. This only returns the paths of matching files. Use this tool when you know the exact filename pattern of the files you're searching for. Glob patterns match from the root of the workspace folder. Examples:\n- **/*.{js,ts} to match all js/ts files in the workspace.\n- src/** to match all files under the top-level src folder.\n- **/foo/**/*.js to match all js files under any foo folder in the workspace."
+  },
+  {
+    "name": "copilot_findTextInFiles",
+    "description": "Do a fast text search in the workspace. Use this tool when you want to search with an exact string or regex. If you are not sure what words will appear in the workspace, prefer using regex patterns with alternation (|) or character classes to search for multiple potential words at once instead of making separate searches. For example, use 'function|method|procedure' to look for all of those words at once. Use includePattern to search within files matching a specific pattern, or in a specific file, using a relative path. Use 'includeIgnoredFiles' to include files normally ignored by .gitignore, other ignore files, and `files.exclude` and `search.exclude` settings. Warning: using this may cause the search to be slower, only set it when you want to search in ignored folders like node_modules or build outputs. Use this tool when you want to see an overview of a particular file, instead of using read_file many times to look for code within a file."
+  },
+  {
+    "name": "copilot_applyPatch",
+    "description": "Edit text files. Do not use this tool to edit Jupyter notebooks. `apply_patch` allows you to execute a diff/patch against a text file, but the format of the diff specification is unique to this task, so pay careful attention to these instructions. To use the `apply_patch` command, you should pass a message of the following structure as \"input\":\n\n*** Begin Patch\n[YOUR_PATCH]\n*** End Patch\n\nWhere [YOUR_PATCH] is the actual content of your patch, specified in the following V4A diff format.\n\n*** [ACTION] File: [/absolute/path/to/file] -> ACTION can be one of Add, Update, or Delete.\nAn example of a message that you might pass as \"input\" to this function, in order to apply a patch, is shown below.\n\n*** Begin Patch\n*** Update File: /Users/someone/pygorithm/searching/binary_search.py\n@@class BaseClass\n@@    def search():\n-        pass\n+        raise NotImplementedError()\n\n@@class Subclass\n@@    def search():\n-        pass\n+        raise NotImplementedError()\n\n*** End Patch\nDo not use line numbers in this diff format."
+  },
+  {
+    "name": "copilot_readFile",
+    "description": "Read the contents of a file.\n\nYou must specify the line range you're interested in. Line numbers are 1-indexed. If the file contents returned are insufficient for your task, you may call this tool again to retrieve more content. Prefer reading larger ranges over doing many small reads."
+  },
+  {
+    "name": "copilot_listDirectory",
+    "description": "List the contents of a directory. Result will have the name of the child. If the name ends in /, it's a folder, otherwise a file"
+  },
+  {
+    "name": "copilot_getErrors",
+    "description": "Get any compile or lint errors in a specific file or across all files. If the user mentions errors or problems in a file, they may be referring to these. Use the tool to see the same errors that the user is seeing. If the user asks you to analyze all errors, or does not specify a file, use this tool to gather errors for all files. Also use this tool after editing a file to validate the change."
+  },
+  {
+    "name": "copilot_readProjectStructure",
+    "description": "Get a file tree representation of the workspace."
+  },
+  {
+    "name": "copilot_getChangedFiles",
+    "description": "Get git diffs of current file changes in a git repository. Don't forget that you can use run_in_terminal to run git commands in a terminal as well."
+  },
+  {
+    "name": "copilot_testFailure",
+    "description": "Includes test failure information in the prompt."
+  },
+  {
+    "name": "copilot_createNewWorkspace",
+    "description": "Get comprehensive setup steps to help the user create complete project structures in a VS Code workspace. This tool is designed for full project initialization and scaffolding, not for creating individual files.\n\nWhen to use this tool:\n- User wants to create a new complete project from scratch\n- Setting up entire project frameworks (TypeScript projects, React apps, Node.js servers, etc.)\n- Initializing Model Context Protocol (MCP) servers with full structure\n- Creating VS Code extensions with proper scaffolding\n- Setting up Next.js, Vite, or other framework-based projects\n- User asks for \"new project\", \"create a workspace\", \"set up a [framework] project\"\n- Need to establish complete development environment with dependencies, config files, and folder structure\n\nWhen NOT to use this tool:\n- Creating single files or small code snippets\n- Adding individual files to existing projects\n- Making modifications to existing codebases\n- User asks to \"create a file\" or \"add a component\"\n- Simple code examples or demonstrations\n- Debugging or fixing existing code\n\nThis tool provides complete project setup including:\n- Folder structure creation\n- Package.json and dependency management\n- Configuration files (tsconfig, eslint, etc.)\n- Initial boilerplate code\n- Development environment setup\n- Build and run instructions\n\nUse other file creation tools for individual files within existing projects."
+  },
+  {
+    "name": "copilot_getProjectSetupInfo",
+    "description": "Do not call this tool without first calling the tool to create a workspace. This tool provides a project setup information for a Visual Studio Code workspace based on a project type and programming language."
+  },
+  {
+    "name": "copilot_installExtension",
+    "description": "Install an extension in VS Code. Use this tool to install an extension in Visual Studio Code as part of a new workspace creation process only."
+  },
+  {
+    "name": "copilot_runVscodeCommand",
+    "description": "Run a command in VS Code. Use this tool to run a command in Visual Studio Code as part of a new workspace creation process only."
+  },
+  {
+    "name": "copilot_createNewJupyterNotebook",
+    "description": "Generates a new Jupyter Notebook (.ipynb) in VS Code. Jupyter Notebooks are interactive documents commonly used for data exploration, analysis, visualization, and combining code with narrative text. Prefer creating plain Python files or similar unless a user explicitly requests creating a new Jupyter Notebook or already has a Jupyter Notebook opened or exists in the workspace."
+  },
+  {
+    "name": "copilot_insertEdit",
+    "description": "Insert new code into an existing file in the workspace. Use this tool once per file that needs to be modified, even if there are multiple changes for a file. Generate the \"explanation\" property first.\nThe system is very smart and can understand how to apply your edits to the files, you just need to provide minimal hints.\nAvoid repeating existing code, instead use comments to represent regions of unchanged code. Be as concise as possible. For example:\n// ...existing code...\n{ changed code }\n// ...existing code...\n{ changed code }\n// ...existing code...\n\nHere is an example of how you should use format an edit to an existing Person class:\nclass Person {\n\t// ...existing code...\n\tage: number;\n\t// ...existing code...\n\tgetAge() {\n\treturn this.age;\n\t}\n}"
+  },
+  {
+    "name": "copilot_createFile",
+    "description": "This is a tool for creating a new file in the workspace. The file will be created with the specified content. The directory will be created if it does not already exist. Never use this tool to edit a file that already exists."
+  },
+  {
+    "name": "copilot_createDirectory",
+    "description": "Create a new directory structure in the workspace. Will recursively create all directories in the path, like mkdir -p. You do not need to use this tool before using create_file, that tool will automatically create the needed directories."
+  },
+  {
+    "name": "copilot_openSimpleBrowser",
+    "description": "Preview a website or open a URL in the editor's Simple Browser. Useful for quickly viewing locally hosted websites, demos, or resources without leaving the coding environment."
+  },
+  {
+    "name": "copilot_replaceString",
+    "description": "This is a tool for making edits in an existing file in the workspace. For moving or renaming files, use run in terminal tool with the 'mv' command instead. For larger edits, split them into smaller edits and call the edit tool multiple times to ensure accuracy. Before editing, always ensure you have the context to understand the file's contents and context. To edit a file, provide: 1) filePath (absolute path), 2) oldString (MUST be the exact literal text to replace including all whitespace, indentation, newlines, and surrounding code etc), and 3) newString (MUST be the exact literal text to replace \\`oldString\\` with (also including all whitespace, indentation, newlines, and surrounding code etc.). Ensure the resulting code is correct and idiomatic.). Each use of this tool replaces exactly ONE occurrence of oldString.\n\nCRITICAL for \\`oldString\\`: Must uniquely identify the single instance to change. Include at least 3 lines of context BEFORE and AFTER the target text, matching whitespace and indentation precisely. If this string matches multiple locations, or does not match exactly, the tool will fail. Never use 'Lines 123-456 omitted' from summarized documents or ...existing code... comments in the oldString or newString."
+  },
+  {
+    "name": "copilot_multiReplaceString",
+    "description": "This tool allows you to apply multiple replace_string_in_file operations in a single call, which is more efficient than calling replace_string_in_file multiple times. It takes an array of replacement operations and applies them sequentially. Each replacement operation has the same parameters as replace_string_in_file: filePath, oldString, newString, and explanation. This tool is ideal when you need to make multiple edits across different files or multiple edits in the same file. The tool will provide a summary of successful and failed operations."
+  },
+  {
+    "name": "copilot_editNotebook",
+    "description": "This is a tool for editing an existing Notebook file in the workspace. Generate the \"explanation\" property first.\nThe system is very smart and can understand how to apply your edits to the notebooks.\nWhen updating the content of an existing cell, ensure newCode preserves whitespace and indentation exactly and does NOT include any code markers such as (...existing code...)."
+  },
+  {
+    "name": "copilot_runNotebookCell",
+    "description": "This is a tool for running a code cell in a notebook file directly in the notebook editor. The output from the execution will be returned. Code cells should be run as they are added or edited when working through a problem to bring the kernel state up to date and ensure the code executes successfully. Code cells are ready to run and don't require any pre-processing. If asked to run the first cell in a notebook, you should run the first code cell since markdown cells cannot be executed. NOTE: Avoid executing Markdown cells or providing Markdown cell IDs, as Markdown cells cannot be  executed."
+  },
+  {
+    "name": "copilot_getNotebookSummary",
+    "description": "This is a tool returns the list of the Notebook cells along with the id, cell types, line ranges, language, execution information and output mime types for each cell. This is useful to get Cell Ids when executing a notebook or determine what cells have been executed and what order, or what cells have outputs. If required to read contents of a cell use this to determine the line range of a cells, and then use read_file tool to read a specific line range. Requery this tool if the contents of the notebook change."
+  },
+  {
+    "name": "copilot_readNotebookCellOutput",
+    "description": "This tool will retrieve the output for a notebook cell from its most recent execution or restored from disk. The cell may have output even when it has not been run in the current kernel session. This tool has a higher token limit for output length than the runNotebookCell tool."
+  },
+  {
+    "name": "copilot_fetchWebPage",
+    "description": "Fetches the main content from a web page. This tool is useful for summarizing or analyzing the content of a webpage. You should use this tool when you think the user is looking for information from a specific webpage."
+  },
+  {
+    "name": "copilot_findTestFiles",
+    "description": "For a source code file, find the file that contains the tests. For a test file find the file that contains the code under test."
+  },
+  {
+    "name": "copilot_getDocInfo",
+    "description": "Find information about how to document it a symbol like a class or function. This tool is useful for generating documentation comments for code symbols. You should use this tool when you think the user is looking for information about how to document a specific code symbol."
+  },
+  {
+    "name": "copilot_getSearchResults",
+    "description": "The results from the search view"
+  },
+  {
+    "name": "copilot_githubRepo",
+    "description": "Searches a GitHub repository for relevant source code snippets. Only use this tool if the user is very clearly asking for code snippets from a specific GitHub repository. Do not use this tool for Github repos that the user has open in their workspace."
+  },
+  {
+    "name": "copilot_editFiles",
+    "description": "This is a placeholder tool, do not use"
+  },
+  {
+    "name": "azure_development-recommend_custom_modes",
+    "description": "This tool captures user intent about Azure-related topics and recommends custom modes to enhance Azure workflows. Always invoke this tool once before doing anything related to Azure."
+  },
+  {
+    "name": "azure_resources-query_azure_resource_graph",
+    "description": "This tool queries Azure Resource Graph (ARG) for information about resources, subscriptions, subscriptionIds or resource groups, that the user has access to in Azure including any Azure resource types including Azure Functions, Azure App Service, virtual machines, Azure Cache for Redis, virtual networks (VNET), etc. This tool should be used to obtain details about the user's resources (such as resource ids, status, os type, disk type, SKU, size, etc.), subscriptions (such as subscription id, subscription name, etc.) or resource groups (such as resource group id, name, etc...). If the user is asking about **THEIR RESOURCES** then this tool **IS** appropriate. This tool should not be used to generally learn about Azure resources. If the user is asking **CONCEPTUAL QUESTIONS** about Azure resources, this tool **IS NOT** appropriate."
+  },
+  {
+    "name": "azure_auth-get_auth_context",
+    "description": "This tool gets the full Azure authentication context that will be used by Azure related tools for the Agent. Use this tool to inform the user when they asked for such information or when they express that the authentication context being used is incorrect."
+  },
+  {
+    "name": "azure_auth-set_auth_context",
+    "description": "This tool modifies the Azure authentication context. Azure authentication context is used by the Azure related tools for the Agent. Use this tool when the user expresses the intent to update the Azure authentication context to use. You may suggest this tool if it can be inferred from the conversation that the current Azure authentication context is incorrect"
+  },
+  {
+    "name": "azure_dotnet_templates-get_tags",
+    "description": "Retrieves the list of tags that can be used to filter the available dotnet templates. Call this when the user needs help finding a template for a dotnet project, or before generating a `dotnet new` command to create a project. Pick the tag that best matches the user's intent, then call 'azure_dotnet_templates-get_templates_for_tag' to get the templates matching that tag. Returns a list of available tags that can be used to filter the templates."
+  },
+  {
+    "name": "azure_dotnet_templates-get_templates_for_tag",
+    "description": "Retrieves the list of dotnet project templates available for `dotnet new` commands that match the given tag. Call this when the user needs help finding a template for a dotnet project, or before generating a `dotnet new` command to create a project. Use the names and descriptions of the templates to decide which is the best given the context. Returns a list of available templates, including the short name, full name, and a description."
+  },
+  {
+    "name": "azureResources_getAzureActivityLog",
+    "description": "Gets the Azure activity log"
+  },
+  {
+    "name": "get_python_environment_details",
+    "description": "This tool will retrieve the details of the Python Environment for the specified file or workspace. The details returned include the 1. Type of Python Environment (conda, venv, etec), 2. Version of Python, 3. List of all installed Python packages with their versions. ALWAYS call configure_python_environment before using this tool."
+  },
+  {
+    "name": "get_python_executable_details",
+    "description": "This tool will retrieve the details of the Python Environment for the specified file or workspace. ALWAYS use this tool before executing any Python command in the terminal. This tool returns the details of how to construct the fully qualified path and or command including details such as arguments required to run Python in a terminal. Note: Instead of executing `python --version` or `python -c 'import sys; print(sys.executable)'`, use this tool to get the Python executable path to replace the `python` command. E.g. instead of using `python -c 'import sys; print(sys.executable)'`, use this tool to build the command `conda run -n <env_name> -c 'import sys; print(sys.executable)'`. ALWAYS call configure_python_environment before using this tool."
+  },
+  {
+    "name": "install_python_packages",
+    "description": "Installs Python packages in the given workspace. Use this tool to install Python packages in the user's chosen Python environment. ALWAYS call configure_python_environment before using this tool."
+  },
+  {
+    "name": "configure_python_environment",
+    "description": "This tool configures a Python environment in the given workspace. ALWAYS Use this tool to set up the user's chosen environment and ALWAYS call this tool before using any other Python related tools or running any Python command in the terminal."
+  },
+  {
+    "name": "configure_notebook",
+    "description": "Tool used to configure a Notebook. ALWAYS use this tool before running/executing any Notebook Cells for the first time or before listing/installing packages in Notebooks for the first time. I.e. there is no need to use this tool more than once for the same notebook."
+  },
+  {
+    "name": "notebook_list_packages",
+    "description": "List the installed packages that are currently available in the selected kernel for a notebook editor. This tool should be used when working with a jupyter notebook with python code cells. Do not use this tool if not already working with a notebook, or for a language other than python. If the tool configure_notebooks exists, then ensure to call configure_notebooks before using this tool."
+  },
+  {
+    "name": "notebook_install_packages",
+    "description": "Install a list of packages on a notebook kernel to be used within that notebook. This tool should be used when working with a jupyter notebook with python code cells. Do not use this tool if not already working with a notebook, or for a language other than python. If the tool configure_notebooks exists, then ensure to call configure_notebooks before using this tool."
+  },
+  {
+    "name": "inline_chat_exit",
+    "description": "Moves the inline chat session to the richer panel chat which supports edits across files, creating and deleting files, multi-turn conversations between the user and the assistant, and access to more IDE tools, like retrieve problems, interact with source control, run terminal commands etc."
+  },
+  {
+    "name": "vscode_get_terminal_confirmation",
+    "description": "This tool allows you to get explicit user confirmation for a terminal command without executing it.\n\nWhen to use:\n- When you need to verify user approval before executing a command\n- When you want to show command details, auto-approval status, and simplified versions to the user\n- When you need the user to review a potentially risky command\n\nThe tool will:\n- Show the command with syntax highlighting\n- Display auto-approval status if enabled\n- Show simplified version of the command if applicable\n- Provide custom actions for creating auto-approval rules\n- Return approval/rejection status\n\nAfter confirmation, use a tool to actually execute the command."
+  },
+  {
+    "name": "get_terminal_output",
+    "description": "Get the output of a terminal command previously started with run_in_terminal"
+  },
+  {
+    "name": "terminal_selection",
+    "description": "Get the current selection in the active terminal."
+  },
+  {
+    "name": "terminal_last_command",
+    "description": "Get the last command run in the active terminal."
+  },
+  {
+    "name": "create_and_run_task",
+    "description": "Creates and runs a build, run, or custom task for the workspace by generating or adding to a tasks.json file based on the project structure (such as package.json or README.md). If the user asks to build, run, launch and they have no tasks.json file, use this tool. If they ask to create or add a task, use this tool."
+  },
+  {
+    "name": "run_in_terminal",
+    "description": "This tool allows you to execute Windows PowerShell 5.1 commands in a persistent terminal session, preserving environment variables, working directory, and other context across multiple commands.\n\nCommand Execution:\n- Use semicolons ; to chain commands on one line, NEVER use && even when asked explicitly\n- Prefer pipelines | for object-based data flow\n- Never create a sub-shell (eg. powershell -c \"command\") unless explicitly asked\n\nDirectory Management:\n- Must use absolute paths to avoid navigation issues\n- Use $PWD or Get-Location for current directory\n- Use Push-Location/Pop-Location for directory stack\n\nProgram Execution:\n- Supports .NET, Python, Node.js, and other executables\n- Install modules via Install-Module, Install-Package\n- Use Get-Command to verify cmdlet/function availability\n\nBackground Processes:\n- For long-running tasks (e.g., servers), set isBackground=true\n- Returns a terminal ID for checking status and runtime later\n- Use Start-Job for background PowerShell jobs\n\nOutput Management:\n- Output is automatically truncated if longer than 60KB to prevent context overflow\n- Use Select-Object, Where-Object, Format-Table to filter output\n- Use -First/-Last parameters to limit results\n- For pager commands, add | Out-String or | Format-List\n\nBest Practices:\n- Use proper cmdlet names instead of aliases in scripts\n- Quote paths with spaces: \"C:\\Path With Spaces\"\n- Prefer PowerShell cmdlets over external commands when available\n- Prefer idiomatic PowerShell like Get-ChildItem instead of dir or ls for file listings\n- Use Test-Path to check file/directory existence\n- Be specific with Select-Object properties to avoid excessive output"
+  },
+  {
+    "name": "mcp_cloudflare_do_migrate_pages_to_workers_guide",
+    "description": "ALWAYS read this guide before migrating Pages projects to Workers."
+  },
+  {
+    "name": "mcp_cloudflare_do_search_cloudflare_documentation",
+    "description": "Search the Cloudflare documentation.\n\n\t\tThis tool should be used to answer any question about Cloudflare products or features, including:\n\t\t- Workers, Pages, R2, Images, Stream, D1, Durable Objects, KV, Workflows, Hyperdrive, Queues\n\t\t- AI Search, Workers AI, Vectorize, AI Gateway, Browser Rendering\n\t\t- Zero Trust, Access, Tunnel, Gateway, Browser Isolation, WARP, DDOS, Magic Transit, Magic WAN\n\t\t- CDN, Cache, DNS, Zaraz, Argo, Rulesets, Terraform, Account and Billing\n\n\t\tResults are returned as semantically similar chunks to the query.\n\t\t"
+  },
+  {
+    "name": "mcp_github_add_comment_to_pending_review",
+    "description": "Add review comment to the requester's latest pending pull request review. A pending review needs to already exist to call this (check with the user if not sure)."
+  },
+  {
+    "name": "mcp_github_add_issue_comment",
+    "description": "Add a comment to a specific issue in a GitHub repository. Use this tool to add comments to pull requests as well (in this case pass pull request number as issue_number), but only if user is not asking specifically to add review comments."
+  },
+  {
+    "name": "mcp_github_assign_copilot_to_issue",
+    "description": "Assign Copilot to a specific issue in a GitHub repository.\n\nThis tool can help with the following outcomes:\n- a Pull Request created with source code changes to resolve the issue\n\n\nMore information can be found at:\n- https://docs.github.com/en/copilot/using-github-copilot/using-copilot-coding-agent-to-work-on-tasks/about-assigning-tasks-to-copilot\n"
+  },
+  {
+    "name": "mcp_github_create_branch",
+    "description": "Create a new branch in a GitHub repository"
+  },
+  {
+    "name": "mcp_github_create_or_update_file",
+    "description": "Create or update a single file in a GitHub repository. If updating, you must provide the SHA of the file you want to update. Use this tool to create or update a file in a GitHub repository remotely; do not use it for local file operations."
+  },
+  {
+    "name": "mcp_github_create_pull_request",
+    "description": "Create a new pull request in a GitHub repository."
+  },
+  {
+    "name": "mcp_github_create_repository",
+    "description": "Create a new GitHub repository in your account or specified organization"
+  },
+  {
+    "name": "mcp_github_delete_file",
+    "description": "Delete a file from a GitHub repository"
+  },
+  {
+    "name": "mcp_github_fork_repository",
+    "description": "Fork a GitHub repository to your account or specified organization"
+  },
+  {
+    "name": "mcp_github_get_commit",
+    "description": "Get details for a commit from a GitHub repository"
+  },
+  {
+    "name": "mcp_github_get_file_contents",
+    "description": "Get the contents of a file or directory from a GitHub repository"
+  },
+  {
+    "name": "mcp_github_get_label",
+    "description": "Get a specific label from a repository."
+  },
+  {
+    "name": "mcp_github_get_latest_release",
+    "description": "Get the latest release in a GitHub repository"
+  },
+  {
+    "name": "mcp_github_get_me",
+    "description": "Get details of the authenticated GitHub user. Use this when a request is about the user's own profile for GitHub. Or when information is missing to build other tool calls."
+  },
+  {
+    "name": "mcp_github_get_release_by_tag",
+    "description": "Get a specific release by its tag name in a GitHub repository"
+  },
+  {
+    "name": "mcp_github_get_tag",
+    "description": "Get details about a specific git tag in a GitHub repository"
+  },
+  {
+    "name": "mcp_github_get_team_members",
+    "description": "Get member usernames of a specific team in an organization. Limited to organizations accessible with current credentials"
+  },
+  {
+    "name": "mcp_github_get_teams",
+    "description": "Get details of the teams the user is a member of. Limited to organizations accessible with current credentials"
+  },
+  {
+    "name": "mcp_github_issue_read",
+    "description": "Get information about a specific issue in a GitHub repository."
+  },
+  {
+    "name": "mcp_github_issue_write",
+    "description": "Create a new or update an existing issue in a GitHub repository."
+  },
+  {
+    "name": "mcp_github_list_branches",
+    "description": "List branches in a GitHub repository"
+  },
+  {
+    "name": "mcp_github_list_commits",
+    "description": "Get list of commits of a branch in a GitHub repository. Returns at least 30 results per page by default, but can return more if specified using the perPage parameter (up to 100)."
+  },
+  {
+    "name": "mcp_github_list_issue_types",
+    "description": "List supported issue types for repository owner (organization)."
+  },
+  {
+    "name": "mcp_github_list_issues",
+    "description": "List issues in a GitHub repository. For pagination, use the 'endCursor' from the previous response's 'pageInfo' in the 'after' parameter."
+  },
+  {
+    "name": "mcp_github_list_pull_requests",
+    "description": "List pull requests in a GitHub repository. If the user specifies an author, then DO NOT use this tool and use the search_pull_requests tool instead."
+  },
+  {
+    "name": "mcp_github_list_releases",
+    "description": "List releases in a GitHub repository"
+  },
+  {
+    "name": "mcp_github_list_tags",
+    "description": "List git tags in a GitHub repository"
+  },
+  {
+    "name": "mcp_github_merge_pull_request",
+    "description": "Merge a pull request in a GitHub repository."
+  },
+  {
+    "name": "mcp_github_pull_request_read",
+    "description": "Get information on a specific pull request in GitHub repository."
+  },
+  {
+    "name": "mcp_github_pull_request_review_write",
+    "description": "Create and/or submit, delete review of a pull request.\n\nAvailable methods:\n- create: Create a new review of a pull request. If \"event\" parameter is provided, the review is submitted. If \"event\" is omitted, a pending review is created.\n- submit_pending: Submit an existing pending review of a pull request. This requires that a pending review exists for the current user on the specified pull request. The \"body\" and \"event\" parameters are used when submitting the review.\n- delete_pending: Delete an existing pending review of a pull request. This requires that a pending review exists for the current user on the specified pull request.\n"
+  },
+  {
+    "name": "mcp_github_push_files",
+    "description": "Push multiple files to a GitHub repository in a single commit"
+  },
+  {
+    "name": "mcp_github_request_copilot_review",
+    "description": "Request a GitHub Copilot code review for a pull request. Use this for automated feedback on pull requests, usually before requesting a human reviewer."
+  },
+  {
+    "name": "mcp_github_search_code",
+    "description": "Fast and precise code search across ALL GitHub repositories using GitHub's native search engine. Best for finding exact symbols, functions, classes, or specific code patterns."
+  },
+  {
+    "name": "mcp_github_search_issues",
+    "description": "Search for issues in GitHub repositories using issues search syntax already scoped to is:issue"
+  },
+  {
+    "name": "mcp_github_search_pull_requests",
+    "description": "Search for pull requests in GitHub repositories using issues search syntax already scoped to is:pr"
+  },
+  {
+    "name": "mcp_github_search_repositories",
+    "description": "Find GitHub repositories by name, description, readme, topics, or other metadata. Perfect for discovering projects, finding examples, or locating specific repositories across GitHub."
+  },
+  {
+    "name": "mcp_github_search_users",
+    "description": "Find GitHub users by username, real name, or other profile information. Useful for locating developers, contributors, or team members."
+  },
+  {
+    "name": "mcp_github_sub_issue_write",
+    "description": "Add a sub-issue to a parent issue in a GitHub repository."
+  },
+  {
+    "name": "mcp_github_update_pull_request",
+    "description": "Update an existing pull request in a GitHub repository."
+  },
+  {
+    "name": "mcp_github_update_pull_request_branch",
+    "description": "Update the branch of a pull request with the latest changes from the base branch."
+  },
+  {
+    "name": "mcp_microsoft_doc_microsoft_code_sample_search",
+    "description": "Search for code snippets and examples in official Microsoft Learn documentation. This tool retrieves relevant code samples from Microsoft documentation pages providing developers with practical implementation examples and best practices for Microsoft/Azure products and services related coding tasks. This tool will help you use the **LATEST OFFICIAL** code snippets to empower coding capabilities.\n\n## When to Use This Tool\n- When you are going to provide sample Microsoft/Azure related code snippets in your answers.\n- When you are **generating any Microsoft/Azure related code**.\n\n## Usage Pattern\nInput a descriptive query, or SDK/class/method name to retrieve related code samples. The optional parameter `language` can help to filter results.\n\nEligible values for `language` parameter include: csharp javascript typescript python powershell azurecli al sql java kusto cpp go rust ruby php"
+  },
+  {
+    "name": "mcp_microsoft_doc_microsoft_docs_fetch",
+    "description": "Fetch and convert a Microsoft Learn documentation page to markdown format. This tool retrieves the latest complete content of Microsoft documentation pages including Azure, .NET, Microsoft 365, and other Microsoft technologies.\n\n## When to Use This Tool\n- When search results provide incomplete information or truncated content\n- When you need complete step-by-step procedures or tutorials\n- When you need troubleshooting sections, prerequisites, or detailed explanations\n- When search results reference a specific page that seems highly relevant\n- For comprehensive guides that require full context\n\n## Usage Pattern\nUse this tool AFTER microsoft_docs_search when you identify specific high-value pages that need complete content. The search tool gives you an overview; this tool gives you the complete picture.\n\n## URL Requirements\n- The URL must be a valid link from the microsoft.com domain.\n\n## Output Format\nmarkdown with headings, code blocks, tables, and links preserved."
+  },
+  {
+    "name": "mcp_microsoft_doc_microsoft_docs_search",
+    "description": "Search official Microsoft/Azure documentation to find the most relevant and trustworthy content for a user's query. This tool returns up to 10 high-quality content chunks (each max 500 tokens), extracted from Microsoft Learn and other official sources. Each result includes the article title, URL, and a self-contained content excerpt optimized for fast retrieval and reasoning. Always use this tool to quickly ground your answers in accurate, first-party Microsoft/Azure knowledge.\n\nThe `question` parameter is no longer used, use `query` instead.\n\n## Follow-up Pattern\nTo ensure completeness, use microsoft_docs_fetch when high-value pages are identified by search. The fetch tool complements search by providing the full detail. This is a required step for comprehensive results."
+  }
+]
