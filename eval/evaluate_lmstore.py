@@ -105,7 +105,9 @@ def evaluate_lmstore(
             'tool_llm_selection': tool_llm_selection,
             'latency_llm_selection': latency_llm_selection,
             'tool_vector_search_match': tool_vector_search_match,
-            'tool_llm_selection_match': tool_llm_selection_match
+            'tool_llm_selection_match': tool_llm_selection_match,
+            'embedding_model': embedding_model,
+            'chat_model': chat_model
         }
         results.append(result)
         
@@ -117,12 +119,17 @@ def evaluate_lmstore(
     fieldnames = [
         'query', 'tool', 'tool_vector_search', 'latency_vector_search',
         'tool_llm_selection', 'latency_llm_selection',
-        'tool_vector_search_match', 'tool_llm_selection_match'
+        'tool_vector_search_match', 'tool_llm_selection_match',
+        'embedding_model', 'chat_model'
     ]
     
-    with open(output_csv_path, 'w', newline='', encoding='utf-8') as f:
+    # Check if file exists to determine if we need to write header
+    file_exists = os.path.exists(output_csv_path)
+    
+    with open(output_csv_path, 'a', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
+        if not file_exists:
+            writer.writeheader()
         writer.writerows(results)
     
     print(f"\n{'='*60}")
@@ -152,7 +159,7 @@ if __name__ == "__main__":
     # Default paths
     base_dir = os.path.dirname(os.path.dirname(__file__))
     eval_data_path = os.path.join(base_dir, 'data', 'eval.json')
-    exported_tools_path = os.path.join(base_dir, 'data', 'exported_tools.json')
+    exported_tools_path = os.path.join(base_dir, 'data', 'lmstore.db.json')
     output_csv_path = os.path.join(base_dir, 'eval', 'evaluation_report.csv')
     
     # Model configurations - update these based on your Azure OpenAI deployment

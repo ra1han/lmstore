@@ -1,22 +1,94 @@
 [
-    {
-        "tool": "mcp_cloudflare_do_search_cloudflare_documentation",
-        "query": "Do Cloudflare Workers costs depend on response sizes? I want to serve some images (map tiles) from an R2 bucket and I'm concerned about costs."    
-    },
-    {
-        "tool": "mcp_cloudflare_do_search_cloudflare_documentation",
-        "query": "How many indexes are supported in Workers Analytics Engine? Give an example using the Workers binding api."    
-    },
-    {
-        "tool": "mcp_cloudflare_do_search_cloudflare_documentation",
-        "query": "Can you give me some information on how to use the Workers AutoRAG binding?"    
-    },
-    {
-        "tool": "accounts_list",
-        "query": "List my Cloudflare accounts."    
-    },
-    {
-        "tool": "kv_namespace_create",
-        "query": "Create a new KV namespace called 'my-kv-store'."    
-    }
+  {
+    "tool": "mcp_cloudflare_do_search_cloudflare_documentation",
+    "query": "Do Cloudflare Workers costs depend on response sizes? I want to serve some images (map tiles) from an R2 bucket and I'm concerned about costs."
+  },
+  {
+    "tool": "mcp_cloudflare_do_search_cloudflare_documentation",
+    "query": "How many indexes are supported in Workers Analytics Engine? Give an example using the Workers binding api."
+  },
+  {
+    "tool": "mcp_cloudflare_do_search_cloudflare_documentation",
+    "query": "Can you give me some information on how to use the Workers AutoRAG binding?"
+  },
+  {
+    "tool": "mcp_github_create_pull_request",
+    "query": "Create a pull request from the feature/auth-fix branch into main for the payments-api repo."
+  },
+  {
+    "tool": "mcp_github_create_pull_request",
+    "query": "Open a PR to merge my hotfix branch into production."
+  },
+  {
+    "tool": "mcp_github_list_commits",
+    "query": "Show me the latest commits on the develop branch."
+  },
+  {
+    "tool": "mcp_github_list_commits",
+    "query": "List the last 50 commits made to the release/v1.2 branch."
+  },
+  {
+    "tool": "mcp_stripe_list_invoices",
+    "query": "List the most recent invoices for customer cus_9x82ABC."
+  },
+  {
+    "tool": "mcp_stripe_list_invoices",
+    "query": "Fetch the last 10 invoices issued in Stripe."
+  },
+  {
+    "tool": "mcp_stripe_create_invoice",
+    "query": "Create a new invoice for customer cus_LM45PQ due in 14 days."
+  },
+  {
+    "tool": "mcp_stripe_create_invoice",
+    "query": "Generate an invoice for customer cus_12345."
+  },
+  {
+    "tool": "mcp_supabase_deploy_edge_function",
+    "query": "Deploy an Edge Function that returns a JSON Hello World response."
+  },
+  {
+    "tool": "mcp_supabase_deploy_edge_function",
+    "query": "Update the existing Edge Function with new request handler logic."
+  },
+  {
+    "tool": "mcp_supabase_execute_sql",
+    "query": "Run a SQL query to fetch all users created in the last 7 days."
+  },
+  {
+    "tool": "mcp_supabase_execute_sql",
+    "query": "Execute a SELECT query against the Supabase Postgres database."
+  },
+  {
+    "tool": "mcp_apify_call-actor",
+    "query": "Scrape recent Instagram posts for a given hashtag using Apify."
+  },
+  {
+    "tool": "mcp_apify_call-actor",
+    "query": "Run an Apify actor to crawl product listings from an e-commerce site."
+  },
+  {
+    "tool": "mcp_canva_export-design",
+    "query": "Export this Canva presentation as a PDF and provide a download link."
+  },
+  {
+    "tool": "mcp_canva_export-design",
+    "query": "Download the current Canva design as a PNG file."
+  },
+  {
+    "tool": "mcp_canva_list-comments",
+    "query": "Show all unresolved comments on this Canva design."
+  },
+  {
+    "tool": "mcp_canva_list-comments",
+    "query": "List all comments and replies for design ID DAFxyz123."
+  },
+  {
+    "tool": "mcp_microsoft_doc_microsoft_docs_search",
+    "query": "Search Microsoft documentation for best practices on Azure Functions cold starts."
+  },
+  {
+    "tool": "mcp_microsoft_doc_microsoft_docs_search",
+    "query": "Find official Microsoft Learn articles about securing APIs with Azure AD."
+  }
 ]
