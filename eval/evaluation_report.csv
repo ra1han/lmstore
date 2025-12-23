@@ -1,0 +1,6 @@
+query,tool,tool_vector_search,latency_vector_search,tool_llm_selection,latency_llm_selection,tool_vector_search_match,tool_llm_selection_match
+Do Cloudflare Workers costs depend on response sizes? I want to serve some images (map tiles) from an R2 bucket and I'm concerned about costs.,mcp_cloudflare_do_search_cloudflare_documentation,r2_buckets_list,1310.36,mcp_cloudflare_do_search_cloudflare_documentation,2607.89,False,True
+How many indexes are supported in Workers Analytics Engine? Give an example using the Workers binding api.,mcp_cloudflare_do_search_cloudflare_documentation,observability_values,59.4,observability_keys,1201.23,False,False
+Can you give me some information on how to use the Workers AutoRAG binding?,mcp_cloudflare_do_search_cloudflare_documentation,workers_builds_set_active_worker,52.8,mcp_cloudflare_do_search_cloudflare_documentation,1083.8,False,True
+List my Cloudflare accounts.,accounts_list,accounts_list,58.43,accounts_list,956.0,True,True
+Create a new KV namespace called 'my-kv-store'.,kv_namespace_create,kv_namespace_create,56.93,kv_namespace_create,1064.6,True,True

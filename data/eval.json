@@ -1,22 +1,22 @@
 [
     {
-        "query": "mcp_cloudflare_do_search_cloudflare_documentation",
-        "tool": "Do Cloudflare Workers costs depend on response sizes? I want to serve some images (map tiles) from an R2 bucket and I'm concerned about costs."    
+        "tool": "mcp_cloudflare_do_search_cloudflare_documentation",
+        "query": "Do Cloudflare Workers costs depend on response sizes? I want to serve some images (map tiles) from an R2 bucket and I'm concerned about costs."    
     },
     {
-        "query": "mcp_cloudflare_do_search_cloudflare_documentation",
-        "tool": "How many indexes are supported in Workers Analytics Engine? Give an example using the Workers binding api."    
+        "tool": "mcp_cloudflare_do_search_cloudflare_documentation",
+        "query": "How many indexes are supported in Workers Analytics Engine? Give an example using the Workers binding api."    
     },
     {
-        "query": "mcp_cloudflare_do_search_cloudflare_documentation",
-        "tool": "Can you give me some information on how to use the Workers AutoRAG binding?"    
+        "tool": "mcp_cloudflare_do_search_cloudflare_documentation",
+        "query": "Can you give me some information on how to use the Workers AutoRAG binding?"    
     },
     {
-        "query": "accounts_list",
-        "tool": "List my Cloudflare accounts."    
+        "tool": "accounts_list",
+        "query": "List my Cloudflare accounts."    
     },
     {
-        "query": "kv_namespace_create",
-        "tool": "Create a new KV namespace called 'my-kv-store'."    
+        "tool": "kv_namespace_create",
+        "query": "Create a new KV namespace called 'my-kv-store'."    
     }
 ]
