@@ -9,8 +9,6 @@ import json
 from dataclasses import dataclass, asdict
 from typing import Optional, Union
 import numpy as np
-from openai import AzureOpenAI, OpenAI
-
 
 @dataclass
 class Operator:
@@ -30,24 +28,16 @@ class SearchResult:
 
 class LMStore:
     
-    def __init__(self, client: Union[AzureOpenAI, OpenAI]):
+    def __init__(self, chat: callable, embed: callable):
 
-        self._client = client
+        self._chat = chat
+        self._embed = embed
         self._operators: list[Operator] = []
     
     @property
     def count(self) -> int:
 
         return len(self._operators)
-    
-    def _generate_embedding(self, text: str, model: str) -> list[float]:
-
-        response = self._client.embeddings.create(
-            model=model,
-            input=text
-        )
-
-        return response.data[0].embedding
     
     @staticmethod
     def _cosine_similarity(vec1: list[float], vec2: list[float]) -> float:
@@ -67,20 +57,8 @@ class LMStore:
     def add(
         self,
         operators: Union[dict, list[dict]],
-        embedding_model: str
     ) -> int:
-        """
-        Add one or more operators to the store.
-        
-        Args:
-            operators: A single operator dict {"name": str, "description": str}
-                      or a list of such dicts
-            embedding_model: The embedding model name/deployment to use
-            
-        Returns:
-            Number of operators added
-        """
-        # Normalize to list
+
         if isinstance(operators, dict):
             operators = [operators]
         
@@ -92,10 +70,8 @@ class LMStore:
             if not name or not description:
                 raise ValueError(f"Operator must have 'name' and 'description': {op}")
             
-            # Generate embedding for the description
-            embedding = self._generate_embedding(name + " " + description, embedding_model)
+            embedding = self._embed(name + " " + description)
             
-            # Create and store the operator
             operator = Operator(
                 name=name,
                 description=description,
@@ -109,10 +85,8 @@ class LMStore:
     def get(
         self,
         query: str,
-        embedding_model: str,
         limit: int = 3,
         llm_search: bool = False,
-        chat_model: Optional[str] = None,
     ) -> Union[list[SearchResult], tuple[list[SearchResult], Optional[str]]]:
 
         if not self._operators:
@@ -120,14 +94,7 @@ class LMStore:
                 return [], None
             return []
         
-        if not embedding_model:
-            raise ValueError("embedding_model parameter is required")
-        
-        if llm_search and not chat_model:
-            raise ValueError("chat_model parameter is required when llm_search is True")
-                
-        # Generate query embedding
-        query_embedding = self._generate_embedding(query, embedding_model)
+        query_embedding = self._embed(query)
         
         # Calculate similarities
         results = []
@@ -146,7 +113,7 @@ class LMStore:
         if not llm_search:
             return top_results
         
-        llm_result = self._select_with_llm(query, top_results, chat_model)
+        llm_result = self._select_with_llm(query, top_results)
 
         return top_results, llm_result
     
@@ -154,47 +121,25 @@ class LMStore:
         self,
         query: str,
         candidates: list[SearchResult],
-        model: str
     ) -> Optional[str]:
-        """
-        Use LLM Responses API to select the best tool from candidates.
-        
-        Args:
-            query: The original query
-            candidates: List of candidate SearchResult objects
-            model: The LLM model name/deployment
-            
-        Returns:
-            LLMSelectionResult if a tool was selected, None otherwise
-        """
-        # Create tool definitions
-        tools = [
+      
+        messages = [
             {
-                "type": "function",
-                "name": result.name,
-                "description": result.description,
-                "parameters": {
-                    "type": "object",
-                    "properties": {},
-                    "required": []
-                }
+                "role": "system",
+                "content": "You are a helpful assistant. Select the most appropriate tool to help with the user's request."
+            },
+            {
+                "role": "user",
+                "content": query
             }
-            for result in candidates
         ]
         
-        response = self._client.responses.create(
-            model=model,
-            instructions="You are a helpful assistant. Select the most appropriate tool to help with the user's request. You must call one of the provided tools.",
-            input=query,
-            tools=tools,
-            tool_choice="required"
+        result = self._chat(
+            messages=messages,
+            tools=candidates,
         )
         
-        for item in response.output:
-            if item.type == "function_call":
-                return item.name
-        
-        return None
+        return result
     
     def export(self, filepath: Optional[str] = None) -> Union[str, None]:
         """
