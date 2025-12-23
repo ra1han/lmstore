@@ -14,6 +14,7 @@ import os
 # Add src directory to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
+from llm_adapter import chat_model as c_model, embedding_model as e_model
 from lm_store import LMStore
 from openai import AzureOpenAI
 
@@ -41,15 +42,24 @@ def evaluate_lmstore(
         embedding_model: Embedding model name/deployment
         chat_model: Chat model name/deployment for LLM selection
     """
-    # Initialize Azure OpenAI client
-    client = AzureOpenAI(
-            api_key=os.getenv("AZURE_OPENAI_KEY"),
-            api_version=os.getenv("AZURE_OPENAI_VERSION"),
-            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
-    )
-    
-    # Initialize LMStore and load tools
-    store = LMStore(client)
+    chat = c_model(    
+            provider="ollama",
+            model=os.getenv("CHAT_MODEL"),
+            endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+            key=os.getenv("AZURE_OPENAI_KEY"),
+            api_version=os.getenv("AZURE_OPENAI_VERSION")
+            )
+
+    embed = e_model(    
+            provider="azureopenai",
+            model=os.getenv("EMBEDDING_MODEL"),
+            endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+            key=os.getenv("AZURE_OPENAI_KEY"),
+            api_version=os.getenv("AZURE_OPENAI_VERSION")
+            )
+    # Initialize LMStore
+    store = LMStore(chat, embed)    
+
     loaded_count = store.load_from_file(exported_tools_path)
     print(f"Loaded {loaded_count} tools into LMStore")
     
@@ -70,7 +80,6 @@ def evaluate_lmstore(
         start_time = time.time()
         vector_results = store.get(
             query=query,
-            embedding_model=embedding_model,
             limit=10,
             llm_search=False
         )
@@ -83,10 +92,8 @@ def evaluate_lmstore(
         start_time = time.time()
         llm_results, llm_selection = store.get(
             query=query,
-            embedding_model=embedding_model,
             limit=10,
             llm_search=True,
-            chat_model=chat_model
         )
         latency_llm_selection = round((time.time() - start_time) * 1000, 2)  # ms
         
@@ -159,12 +166,12 @@ if __name__ == "__main__":
     # Default paths
     base_dir = os.path.dirname(os.path.dirname(__file__))
     eval_data_path = os.path.join(base_dir, 'data', 'eval.json')
-    exported_tools_path = os.path.join(base_dir, 'data', 'lmstore.db.json')
+    exported_tools_path = os.path.join(base_dir, 'data', 'lmstore.db')
     output_csv_path = os.path.join(base_dir, 'eval', 'evaluation_report.csv')
     
     # Model configurations - update these based on your Azure OpenAI deployment
-    embedding_model = os.environ.get('AZURE_OPENAI_EMBEDDING_DEPLOYMENT', 'text-embedding-3-small')
-    chat_model = os.environ.get('AZURE_OPENAI_DEPLOYMENT', 'gpt-4o-mini')
+    embedding_model = os.environ.get('EMBEDDING_MODEL', 'text-embedding-3-small')
+    chat_model = os.environ.get('CHAT_MODEL', 'gpt-4o-mini')
     
     print("LMStore Evaluation")
     print(f"{'='*60}")
