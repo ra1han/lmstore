@@ -43,7 +43,7 @@ def evaluate_lmstore(
         chat_model: Chat model name/deployment for LLM selection
     """
     chat = c_model(    
-            provider="ollama",
+            provider="azureopenai",
             model=os.getenv("CHAT_MODEL"),
             endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
             key=os.getenv("AZURE_OPENAI_KEY"),
