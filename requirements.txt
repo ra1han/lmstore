@@ -4,3 +4,8 @@ numpy
 requests
 ollama
 ipykernel
+langchain
+langgraph
+# langchain-core>=0.3.8
+langchain-openai
+langgraph-bigtool
