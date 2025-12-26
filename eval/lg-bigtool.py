@@ -1,17 +1,15 @@
-import math
+import json
 import os
-import types
 import uuid
+from pathlib import Path
 
 from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
 from langchain.embeddings import init_embeddings
 from langgraph.store.memory import InMemoryStore
+from langchain_core.tools import Tool
 
 from langgraph_bigtool import create_agent
-from langgraph_bigtool.utils import (
-    convert_positional_only_function_to_tool
-)
 
 load_dotenv()
 
@@ -21,19 +19,29 @@ azure_api_version = os.environ["AZURE_OPENAI_VERSION"]
 chat_model = os.environ["CHAT_MODEL"]
 embedding_model = os.environ["EMBEDDING_MODEL"]
 
-# Collect functions from `math` built-in
-all_tools = []
-for function_name in dir(math):
-    function = getattr(math, function_name)
-    if not isinstance(
-        function, types.BuiltinFunctionType
-    ):
-        continue
-    # This is an idiosyncrasy of the `math` library
-    if tool := convert_positional_only_function_to_tool(
-        function
-    ):
-        all_tools.append(tool)
+# Load tools from JSON file
+tools_path = Path(__file__).parent.parent / "data" / "tools.json"
+with open(tools_path, "r", encoding="utf-8") as f:
+    tools_config = json.load(f)
+
+
+def _make_noop_tool(name: str, description: str) -> Tool:
+    """Create a placeholder tool that simply returns its name when invoked."""
+
+    def _run(*_args, **_kwargs):
+        return f"Executed tool: {name}"
+
+    return Tool.from_function(
+        func=_run,
+        name=name,
+        description=description,
+    )
+
+
+all_tools = [
+    _make_noop_tool(tool["name"], tool.get("description", ""))
+    for tool in tools_config
+]
 
 # Create registry of tools. This is a dict mapping
 # identifiers to tool instances.
@@ -80,11 +88,19 @@ llm = init_chat_model(
 builder = create_agent(llm, tool_registry)
 agent = builder.compile(store=store)
 
-query = "Use available tools to calculate arc cosine of 0.5."
+system_instruction = (
+    "You are a tool-orchestration agent. Always a tool to "
+    "complete the user's request. Never respond directly. Don't try to call the tool, just select it."
+)
+
+messages = [
+    {"role": "system", "content": system_instruction},
+    {"role": "user", "content": "Open a PR to merge my hotfix branch into production."},
+]
 
 # Test it out
 for step in agent.stream(
-    {"messages": query},
+    {"messages": messages},
     stream_mode="updates",
 ):
     for _, update in step.items():
